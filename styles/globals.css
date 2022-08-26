@@ -1,26 +1,42 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+.markdown-area {
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.markdown-area img {
+  max-width: 100%;
+  padding: 0.4rem 0;
 }
 
-* {
-  box-sizing: border-box;
+.markdown-area pre {
+  overflow-x: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
+.markdown-area ul {
+  padding-left: 2rem;
+}
+
+.markdown-area ol {
+  padding-left: 2rem;
+}
+
+.markdown-area p {
+  padding: 0.2rem 0;
+}
+
+.markdown-area h2 {
+  padding-top: 1rem;
+}
+
+.markdown-area h3 {
+  padding-top: 0.8rem;
+}
+
+.markdown-area h4 {
+  padding-top: 0.5rem;
+}
+
+.markdown-area :not(pre) code {
+  background-color: rgb(238, 238, 238);
+  padding: 3px;
 }

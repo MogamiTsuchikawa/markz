@@ -6,7 +6,7 @@ type Props = {
 
 const MarkdownView = ({ md }: Props) => {
   const htmlText = convertToHtml(md);
-  return <div dangerouslySetInnerHTML={{ __html: htmlText }}></div>;
+  return <div  className="markdown-area" dangerouslySetInnerHTML={{ __html: htmlText }}></div>;
 };
 
 export default MarkdownView;
