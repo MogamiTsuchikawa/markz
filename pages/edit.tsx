@@ -1,5 +1,4 @@
 import { useState } from "react";
-import ImageDrawer from "../components/img/ImageDrawer";
 import MarkdownEditor from "../components/markdown/MarkdownEditor";
 
 const EditPage = () => {
@@ -12,7 +11,6 @@ const EditPage = () => {
           setMd(e);
         }}
       />
-      <ImageDrawer />
     </div>
   );
 };

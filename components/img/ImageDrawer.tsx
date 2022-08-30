@@ -1,25 +1,44 @@
-import { useRef, useEffect, MouseEventHandler } from "react";
+import { Box, Button, Modal, Typography } from "@mui/material";
+import { useRef, useEffect, MouseEventHandler, useState } from "react";
+import { DrawImage } from "../../interface/draw";
+import UUID from "uuidjs";
+import useDrawImageList from "../../hook/useDrawImageList";
 
-const ImageDrawer = () => {
-  return (
-    <>
-      <DrawCanvas />
-    </>
-  );
+type ImageDrawerProps = {
+  openImageDrawer: boolean;
+  onDrawEnd: (drawImage: DrawImage) => void;
+  onClose: () => void;
 };
 
-export default ImageDrawer;
+const modalStyle = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 500,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
-const DrawCanvas = () => {
+const ImageDrawer = ({
+  openImageDrawer,
+  onDrawEnd,
+  onClose,
+}: ImageDrawerProps) => {
+  const [open, setOpen] = useState(false);
+  const { addDrawImage } = useDrawImageList();
+  useEffect(() => {
+    if (!openImageDrawer) return;
+    setOpen(openImageDrawer);
+  }, [openImageDrawer]);
   const canvasRef = useRef(null);
-  const getContext = (): CanvasRenderingContext2D => {
+  const getContext = (): CanvasRenderingContext2D | null => {
+    if (!canvasRef.current) return null;
     const canvas: any = canvasRef.current;
     return canvas.getContext("2d");
   };
-  useEffect(() => {
-    const ctx: CanvasRenderingContext2D = getContext();
-    ctx.save();
-  });
   let lastPos = [0, 0];
   let isDrawing = false;
   const getPos = (e: any) => {
@@ -38,6 +57,7 @@ const DrawCanvas = () => {
   const onMouseMove: MouseEventHandler<HTMLCanvasElement> = (e) => {
     if (!isDrawing) return;
     const ctx = getContext();
+    if (ctx === null) return;
     ctx.moveTo(lastPos[0], lastPos[1]);
     const pos = getPos(e);
     ctx.lineTo(pos[0], pos[1]);
@@ -48,16 +68,47 @@ const DrawCanvas = () => {
   const onMouseUp: MouseEventHandler<HTMLCanvasElement> = (e) => {
     isDrawing = false;
   };
+  const onClickSave = () => {
+    const ctx = getContext();
+    if (ctx === null) return;
+    const dataUrl = ctx.canvas.toDataURL();
+    const drawImage: DrawImage = {
+      id: UUID.generate(),
+      imageUrl: dataUrl,
+    };
+    onDrawEnd(drawImage);
+    addDrawImage(drawImage);
+    setOpen(false);
+  };
   return (
     <>
-      <canvas
-        ref={canvasRef}
-        width={400}
-        height={400}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-      ></canvas>
+      <Modal
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          onClose();
+        }}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <canvas
+            style={{ border: "solid black 1px", cursor: "crosshair" }}
+            ref={canvasRef}
+            width={400}
+            height={400}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onMouseLeave={() => {
+              isDrawing = false;
+            }}
+          ></canvas>
+          <Button onClick={onClickSave}>Save</Button>
+        </Box>
+      </Modal>
     </>
   );
 };
+
+export default ImageDrawer;

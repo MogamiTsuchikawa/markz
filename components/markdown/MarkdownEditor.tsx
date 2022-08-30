@@ -1,6 +1,8 @@
 import { ChangeEventHandler, useState, useRef, useEffect } from "react";
 import MarkdownView from "./MarkdownView";
 import { Grid, Button, TextField } from "@mui/material";
+import ImageDrawer from "../img/ImageDrawer";
+import { DrawImage } from "../../interface/draw";
 
 type MarkdownEditorProps = {
   value: string;
@@ -25,6 +27,7 @@ const markdownEditorActionBtns: MarkdownEditorActionBtn[] = [
 const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
   const textFieldElement = useRef<HTMLTextAreaElement>(null);
   const mdPreviewDivElement = useRef<HTMLDivElement>(null);
+  const [openImageDrawer, setOpenImageDrawer] = useState(false);
   const [md, setMd] = useState("");
   useEffect(() => {
     setMd(value);
@@ -36,15 +39,22 @@ const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
   const onScrollTextField = () => {
     if (!mdPreviewDivElement.current || !textFieldElement.current) return;
     mdPreviewDivElement.current.scrollTop =
-      (mdPreviewDivElement.current.scrollHeight * textFieldElement.current.scrollTop) /
-      (textFieldElement.current.scrollHeight - textFieldElement.current.clientHeight);
+      (mdPreviewDivElement.current.scrollHeight *
+        textFieldElement.current.scrollTop) /
+      (textFieldElement.current.scrollHeight -
+        textFieldElement.current.clientHeight);
   };
   const [selectStart, setSelectStart] = useState(0);
   const insertText = (text: string, rtnAdd?: boolean) => {
     const midText = (rtnAdd ? "\n" : "") + text;
-    const newText = md.substring(0, selectStart) + midText + md.substring(selectStart);
+    const newText =
+      md.substring(0, selectStart) + midText + md.substring(selectStart);
     setMd(newText);
     setSelectStart(selectStart + midText.length);
+  };
+  const onDrawEnd = (drawImage: DrawImage) => {
+    insertText(`[[${drawImage.id}]]`, true);
+    setOpenImageDrawer(false);
   };
   return (
     <>
@@ -59,6 +69,13 @@ const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
               {btn.title}
             </Button>
           ))}
+          <Button
+            onClick={() => setOpenImageDrawer(true)}
+            variant="contained"
+            sx={{ marginRight: "0.5rem" }}
+          >
+            画像
+          </Button>
         </Grid>
         <Grid item xs={6}>
           <Grid>
@@ -68,7 +85,12 @@ const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
               onChange={onChangeMd}
               ref={textFieldElement}
               onScroll={onScrollTextField}
-              style={{ height: 500, width: "100%", fontSize: 18, paddingLeft: "2px" }}
+              style={{
+                height: 500,
+                width: "100%",
+                fontSize: 18,
+                paddingLeft: "2px",
+              }}
               onClick={() => {
                 setSelectStart(textFieldElement.current!.selectionStart);
               }}
@@ -95,6 +117,13 @@ const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
           </Grid>
         </Grid>
       </Grid>
+      <ImageDrawer
+        openImageDrawer={openImageDrawer}
+        onDrawEnd={onDrawEnd}
+        onClose={() => {
+          setOpenImageDrawer(false);
+        }}
+      />
     </>
   );
 };

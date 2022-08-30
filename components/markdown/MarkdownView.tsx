@@ -1,3 +1,4 @@
+import useMarkdown from "../../hook/useMarkdown";
 import { convertToHtml } from "../../util/markdown";
 
 type Props = {
@@ -5,8 +6,13 @@ type Props = {
 };
 
 const MarkdownView = ({ md }: Props) => {
-  const htmlText = convertToHtml(md);
-  return <div  className="markdown-area" dangerouslySetInnerHTML={{ __html: htmlText }}></div>;
+  const htmlText = useMarkdown(md);
+  return (
+    <div
+      className="markdown-area"
+      dangerouslySetInnerHTML={{ __html: htmlText }}
+    ></div>
+  );
 };
 
 export default MarkdownView;
