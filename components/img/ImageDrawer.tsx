@@ -1,8 +1,9 @@
-import { Box, Button, Modal, Typography } from "@mui/material";
+import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
 import { useRef, useEffect, MouseEventHandler, useState } from "react";
 import { DrawImage } from "../../interface/draw";
 import UUID from "uuidjs";
 import useDrawImageList from "../../hook/useDrawImageList";
+import { BorderColor } from "@mui/icons-material";
 
 type ImageDrawerProps = {
   openImageDrawer: boolean;
@@ -34,6 +35,7 @@ const ImageDrawer = ({
     setOpen(openImageDrawer);
   }, [openImageDrawer]);
   const canvasRef = useRef(null);
+  const [currentPenColor, setCurrentPenColor] = useState("green");
   const getContext = (): CanvasRenderingContext2D | null => {
     if (!canvasRef.current) return null;
     const canvas: any = canvasRef.current;
@@ -61,7 +63,7 @@ const ImageDrawer = ({
     ctx.moveTo(lastPos[0], lastPos[1]);
     const pos = getPos(e);
     ctx.lineTo(pos[0], pos[1]);
-    ctx.strokeStyle = "green";
+    ctx.strokeStyle = currentPenColor;
     ctx.stroke();
     lastPos = pos;
   };
@@ -80,6 +82,7 @@ const ImageDrawer = ({
     addDrawImage(drawImage);
     setOpen(false);
   };
+
   return (
     <>
       <Modal
@@ -92,6 +95,11 @@ const ImageDrawer = ({
         aria-describedby="modal-modal-description"
       >
         <Box sx={modalStyle}>
+          <div style={{ height: "50px" }}>
+            <IconButton sx={{ color: currentPenColor }}>
+              <BorderColor />
+            </IconButton>
+          </div>
           <canvas
             style={{ border: "solid black 1px", cursor: "crosshair" }}
             ref={canvasRef}
