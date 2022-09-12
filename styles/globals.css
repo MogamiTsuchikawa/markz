@@ -5,7 +5,7 @@
 
 .markdown-area img {
   max-width: 100%;
-  padding: 0.4rem 0;
+  padding: 0.2rem 0;
 }
 
 .markdown-area pre {
@@ -21,22 +21,32 @@
 }
 
 .markdown-area p {
-  padding: 0.2rem 0;
+  padding: 0.1rem 0;
+  margin: 0;
+}
+
+.markdown-area h1 {
+  padding-top: 1rem;
+  margin: 0;
 }
 
 .markdown-area h2 {
   padding-top: 1rem;
+  margin: 0;
 }
 
 .markdown-area h3 {
   padding-top: 0.8rem;
+  margin: 0;
 }
 
 .markdown-area h4 {
   padding-top: 0.5rem;
+  margin: 0;
 }
 
 .markdown-area :not(pre) code {
   background-color: rgb(238, 238, 238);
   padding: 3px;
+  margin: 0;
 }
