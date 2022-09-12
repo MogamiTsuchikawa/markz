@@ -4,6 +4,7 @@ import { DrawImage } from "../../interface/draw";
 import UUID from "uuidjs";
 import useDrawImageList from "../../hook/useDrawImageList";
 import { BorderColor } from "@mui/icons-material";
+import ColorSelectModal from "./ColorSelectModal";
 
 type ImageDrawerProps = {
   openImageDrawer: boolean;
@@ -55,6 +56,9 @@ const ImageDrawer = ({
     if (!canvasRef.current) return;
     isDrawing = true;
     lastPos = getPos(e);
+    const ctx = getContext();
+    if (ctx === null) return;
+    ctx.beginPath();
   };
   const onMouseMove: MouseEventHandler<HTMLCanvasElement> = (e) => {
     if (!isDrawing) return;
@@ -63,7 +67,7 @@ const ImageDrawer = ({
     ctx.moveTo(lastPos[0], lastPos[1]);
     const pos = getPos(e);
     ctx.lineTo(pos[0], pos[1]);
-    ctx.strokeStyle = currentPenColor;
+    ctx.strokeStyle = (" " + currentPenColor).slice(1);
     ctx.stroke();
     lastPos = pos;
   };
@@ -82,6 +86,7 @@ const ImageDrawer = ({
     addDrawImage(drawImage);
     setOpen(false);
   };
+  const [openColorSelector, setOpenColorSelector] = useState(false);
 
   return (
     <>
@@ -96,9 +101,24 @@ const ImageDrawer = ({
       >
         <Box sx={modalStyle}>
           <div style={{ height: "50px" }}>
-            <IconButton sx={{ color: currentPenColor }}>
+            <IconButton
+              sx={{ color: currentPenColor }}
+              onClick={() => {
+                setOpenColorSelector(true);
+              }}
+            >
               <BorderColor />
             </IconButton>
+            <ColorSelectModal
+              isOpen={openColorSelector}
+              onCancel={() => {
+                setOpenColorSelector(false);
+              }}
+              onSelect={(color) => {
+                setCurrentPenColor(color);
+                setOpenColorSelector(false);
+              }}
+            />
           </div>
           <canvas
             style={{ border: "solid black 1px", cursor: "crosshair" }}
