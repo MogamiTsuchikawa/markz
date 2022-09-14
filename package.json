@@ -14,6 +14,7 @@
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.2",
     "@types/highlightjs": "^9.12.2",
+    "@types/katex": "^0.14.0",
     "@types/marked": "^4.0.6",
     "@types/recoil": "^0.0.9",
     "highlightjs": "^9.16.2",
