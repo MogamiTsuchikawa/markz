@@ -1,4 +1,12 @@
-import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Modal,
+  SvgIcon,
+  Icon,
+  Typography,
+} from "@mui/material";
 import { useRef, useEffect, MouseEventHandler, useState } from "react";
 import { DrawImage } from "../../interface/draw";
 import UUID from "uuidjs";
@@ -119,6 +127,11 @@ const ImageDrawer = ({
                 setOpenColorSelector(false);
               }}
             />
+            <IconButton>
+              <Icon>
+                <img src="image/icon/eraser.svg" style={{ maxWidth: "100%" }} />
+              </Icon>
+            </IconButton>
           </div>
           <canvas
             style={{ border: "solid black 1px", cursor: "crosshair" }}
