@@ -42,6 +42,7 @@ const ColorSelectModal = ({ onSelect, onCancel, isOpen }: Props) => {
               onClick={() => {
                 onClickColorBtn(c);
               }}
+              key={c}
             >
               <BorderColor sx={{ color: c }} />
             </IconButton>

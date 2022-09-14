@@ -65,6 +65,7 @@ const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
               onClick={() => insertText(btn.text, btn.rtnAdd)}
               variant="contained"
               sx={{ marginRight: "0.5rem" }}
+              key={btn.title}
             >
               {btn.title}
             </Button>
