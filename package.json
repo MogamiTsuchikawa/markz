@@ -18,6 +18,7 @@
     "@types/recoil": "^0.0.9",
     "highlightjs": "^9.16.2",
     "isomorphic-dompurify": "^0.22.0",
+    "katex": "^0.16.2",
     "marked": "^4.0.19",
     "next": "12.2.5",
     "react": "18.2.0",
