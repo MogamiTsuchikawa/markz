@@ -8,10 +8,13 @@ type Props = {
 const MarkdownView = ({ md }: Props) => {
   const htmlText = useMarkdown(md);
   return (
-    <div
-      className="markdown-area"
-      dangerouslySetInnerHTML={{ __html: htmlText }}
-    ></div>
+    <>
+      <div
+        className="markdown-area"
+        dangerouslySetInnerHTML={{ __html: htmlText }}
+      ></div>
+      <div id="mermaid"></div>
+    </>
   );
 };
 
