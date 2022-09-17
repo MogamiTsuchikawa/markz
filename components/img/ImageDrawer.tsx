@@ -7,7 +7,13 @@ import {
   Icon,
   Typography,
 } from "@mui/material";
-import { useRef, useEffect, MouseEventHandler, useState } from "react";
+import {
+  useRef,
+  useEffect,
+  MouseEventHandler,
+  useState,
+  TouchEventHandler,
+} from "react";
 import { DrawImage, PenMode } from "../../interface/draw";
 import UUID from "uuidjs";
 import useDrawImageList from "../../hook/useDrawImageList";
@@ -72,6 +78,21 @@ const ImageDrawer = ({
     ctx.lineWidth = penMode === "eraser" ? 10 : lineWidth;
     ctx.beginPath();
   };
+  const onTouchStart: TouchEventHandler<HTMLCanvasElement> = (e) => {
+    for (let i = 0; i < e.touches.length; i++) {
+      const t: any = e.touches[i];
+      if (t.touchType !== "stylus") return;
+      if (!canvasRef.current) return;
+      isDrawing = true;
+      lastPos = getPos(e);
+      const ctx = getContext();
+      if (ctx === null) return;
+      ctx.globalCompositeOperation =
+        penMode === "eraser" ? "destination-out" : "source-over";
+      ctx.lineWidth = penMode === "eraser" ? 10 : lineWidth;
+      ctx.beginPath();
+    }
+  };
   const onMouseMove: MouseEventHandler<HTMLCanvasElement> = (e) => {
     if (!isDrawing) return;
     const ctx = getContext();
@@ -83,8 +104,30 @@ const ImageDrawer = ({
     ctx.stroke();
     lastPos = pos;
   };
+  const onTouchMove: TouchEventHandler<HTMLCanvasElement> = (e) => {
+    for (let i = 0; i < e.touches.length; i++) {
+      const t: any = e.touches[i];
+      if (t.touchType !== "stylus") return;
+      if (!isDrawing) return;
+      const ctx = getContext();
+      if (ctx === null) return;
+      ctx.moveTo(lastPos[0], lastPos[1]);
+      const pos = getPos(e);
+      ctx.lineTo(pos[0], pos[1]);
+      ctx.strokeStyle = (" " + currentPenColor).slice(1);
+      ctx.stroke();
+      lastPos = pos;
+    }
+  };
   const onMouseUp: MouseEventHandler<HTMLCanvasElement> = (e) => {
     isDrawing = false;
+  };
+  const onTouchEnd: TouchEventHandler<HTMLCanvasElement> = (e) => {
+    for (let i = 0; i < e.touches.length; i++) {
+      const t: any = e.touches[i];
+      if (t.touchType !== "stylus") return;
+      isDrawing = false;
+    }
   };
   const onClickSave = () => {
     const ctx = getContext();
@@ -184,7 +227,11 @@ const ImageDrawer = ({
             </div>
           </div>
           <canvas
-            style={{ border: "solid black 1px", cursor: "crosshair" }}
+            style={{
+              border: "solid black 1px",
+              cursor: "crosshair",
+              touchAction: "none",
+            }}
             ref={canvasRef}
             width={400}
             height={400}
@@ -194,6 +241,9 @@ const ImageDrawer = ({
             onMouseLeave={() => {
               isDrawing = false;
             }}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
           ></canvas>
           <Button onClick={onClickSave}>Save</Button>
         </Box>
