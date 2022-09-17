@@ -114,7 +114,7 @@ const ImageDrawer = ({
       const ctx = getContext();
       if (ctx === null) return;
       ctx.moveTo(lastPos[0], lastPos[1]);
-      const pos = getPos(e);
+      const pos = [t.clientX, t.clientY];
       ctx.lineTo(pos[0], pos[1]);
       ctx.strokeStyle = (" " + currentPenColor).slice(1);
       ctx.stroke();
