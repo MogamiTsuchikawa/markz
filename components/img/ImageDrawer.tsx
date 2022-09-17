@@ -1,9 +1,17 @@
-import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Modal,
+  SvgIcon,
+  Icon,
+  Typography,
+} from "@mui/material";
 import { useRef, useEffect, MouseEventHandler, useState } from "react";
-import { DrawImage } from "../../interface/draw";
+import { DrawImage, PenMode } from "../../interface/draw";
 import UUID from "uuidjs";
 import useDrawImageList from "../../hook/useDrawImageList";
-import { BorderColor } from "@mui/icons-material";
+import { BorderColor, CssTwoTone } from "@mui/icons-material";
 import ColorSelectModal from "./ColorSelectModal";
 
 type ImageDrawerProps = {
@@ -31,6 +39,7 @@ const ImageDrawer = ({
 }: ImageDrawerProps) => {
   const [open, setOpen] = useState(false);
   const { addDrawImage } = useDrawImageList();
+  const [penMode, setPenMode] = useState<PenMode>("free");
   useEffect(() => {
     if (!openImageDrawer) return;
     setOpen(openImageDrawer);
@@ -58,6 +67,9 @@ const ImageDrawer = ({
     lastPos = getPos(e);
     const ctx = getContext();
     if (ctx === null) return;
+    ctx.globalCompositeOperation =
+      penMode === "eraser" ? "destination-out" : "source-over";
+    ctx.lineWidth = penMode === "eraser" ? 10 : 2;
     ctx.beginPath();
   };
   const onMouseMove: MouseEventHandler<HTMLCanvasElement> = (e) => {
@@ -88,6 +100,8 @@ const ImageDrawer = ({
   };
   const [openColorSelector, setOpenColorSelector] = useState(false);
 
+  const getActiveColor = (isActive: boolean) =>
+    isActive ? { backgroundColor: "gray" } : {};
   return (
     <>
       <Modal
@@ -119,6 +133,51 @@ const ImageDrawer = ({
                 setOpenColorSelector(false);
               }}
             />
+
+            <div
+              style={{
+                border: "solid gray 2px",
+                borderRadius: "5px",
+                display: "inline-block",
+              }}
+            >
+              <IconButton
+                onClick={() => {
+                  setPenMode("eraser");
+                }}
+                sx={getActiveColor(penMode === "eraser")}
+              >
+                <Icon>
+                  <img
+                    src="image/icon/eraser.svg"
+                    style={{ maxWidth: "100%" }}
+                  />
+                </Icon>
+              </IconButton>
+              <IconButton
+                onClick={() => {
+                  setPenMode("free");
+                }}
+                sx={getActiveColor(penMode === "free")}
+              >
+                <Icon>
+                  <img
+                    src="image/icon/squiggly-line.png"
+                    style={{ maxWidth: "100%" }}
+                  />
+                </Icon>
+              </IconButton>
+              <IconButton
+                onClick={() => {
+                  setPenMode("line");
+                }}
+                sx={getActiveColor(penMode === "line")}
+              >
+                <Icon>
+                  <img src="image/icon/line.png" style={{ maxWidth: "100%" }} />
+                </Icon>
+              </IconButton>
+            </div>
           </div>
           <canvas
             style={{ border: "solid black 1px", cursor: "crosshair" }}
