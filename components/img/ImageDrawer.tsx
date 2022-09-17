@@ -25,7 +25,7 @@ type ImageDrawerProps = {
   onDrawEnd: (drawImage: DrawImage) => void;
   onClose: () => void;
 };
-
+const palmRejectionEnabled = "touchType" in Touch.prototype;
 const modalStyle = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -67,6 +67,15 @@ const ImageDrawer = ({
     y = e.clientY - canvas.getBoundingClientRect().top;
     return [x, y];
   };
+  const getTouch = (e: any) => {
+    for (const touch of Array.from(e.changedTouches)) {
+      const t: any = touch;
+      if (!palmRejectionEnabled || t.touchType === "stylus") {
+        return touch;
+      }
+    }
+    return null;
+  };
   const onMouseDown: MouseEventHandler<HTMLCanvasElement> = (e) => {
     if (!canvasRef.current) return;
     isDrawing = true;
@@ -80,19 +89,17 @@ const ImageDrawer = ({
   };
   const onTouchStart: TouchEventHandler<HTMLCanvasElement> = (e) => {
     e.preventDefault();
-    for (let i = 0; i < e.touches.length; i++) {
-      const t: any = e.touches[i];
-      if (t.touchType !== "stylus") continue;
-      if (!canvasRef.current) return;
-      isDrawing = true;
-      lastPos = getPos(e);
-      const ctx = getContext();
-      if (ctx === null) return;
-      ctx.globalCompositeOperation =
-        penMode === "eraser" ? "destination-out" : "source-over";
-      ctx.lineWidth = penMode === "eraser" ? 10 : lineWidth;
-      ctx.beginPath();
-    }
+    if (!canvasRef.current) return;
+    const touch: any = getTouch(e);
+    if (touch === null) return;
+    isDrawing = true;
+    lastPos = [touch.clientX, touch.clientY];
+    const ctx = getContext();
+    if (ctx === null) return;
+    ctx.globalCompositeOperation =
+      penMode === "eraser" ? "destination-out" : "source-over";
+    ctx.lineWidth = penMode === "eraser" ? 10 : lineWidth;
+    ctx.beginPath();
   };
   const onMouseMove: MouseEventHandler<HTMLCanvasElement> = (e) => {
     if (!isDrawing) return;
@@ -107,30 +114,26 @@ const ImageDrawer = ({
   };
   const onTouchMove: TouchEventHandler<HTMLCanvasElement> = (e) => {
     e.preventDefault();
-    for (let i = 0; i < e.touches.length; i++) {
-      const t: any = e.touches[i];
-      if (t.touchType !== "stylus") continue;
-      if (!isDrawing) return;
-      const ctx = getContext();
-      if (ctx === null) return;
-      ctx.moveTo(lastPos[0], lastPos[1]);
-      const pos = [t.clientX, t.clientY];
-      ctx.lineTo(pos[0], pos[1]);
-      ctx.strokeStyle = (" " + currentPenColor).slice(1);
-      ctx.stroke();
-      lastPos = pos;
-    }
+    if (!isDrawing) return;
+    const touch: any = getTouch(e);
+    if (touch === null) return;
+    const ctx = getContext();
+    if (ctx === null) return;
+    ctx.moveTo(lastPos[0], lastPos[1]);
+    const pos = [touch.clientX, touch.clientY];
+    ctx.lineTo(pos[0], pos[1]);
+    ctx.strokeStyle = (" " + currentPenColor).slice(1);
+    ctx.stroke();
+    lastPos = pos;
   };
   const onMouseUp: MouseEventHandler<HTMLCanvasElement> = (e) => {
     isDrawing = false;
   };
   const onTouchEnd: TouchEventHandler<HTMLCanvasElement> = (e) => {
     e.preventDefault();
-    for (let i = 0; i < e.touches.length; i++) {
-      const t: any = e.touches[i];
-      if (t.touchType !== "stylus") continue;
-      isDrawing = false;
-    }
+    const touch: any = getTouch(e);
+    if (touch === null) return;
+    isDrawing = false;
   };
   const onClickSave = () => {
     const ctx = getContext();
