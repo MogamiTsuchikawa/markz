@@ -69,7 +69,7 @@ const ImageDrawer = ({
     if (ctx === null) return;
     ctx.globalCompositeOperation =
       penMode === "eraser" ? "destination-out" : "source-over";
-    ctx.lineWidth = penMode === "eraser" ? 10 : 2;
+    ctx.lineWidth = penMode === "eraser" ? 10 : lineWidth;
     ctx.beginPath();
   };
   const onMouseMove: MouseEventHandler<HTMLCanvasElement> = (e) => {
@@ -99,6 +99,7 @@ const ImageDrawer = ({
     setOpen(false);
   };
   const [openColorSelector, setOpenColorSelector] = useState(false);
+  const [lineWidth, setLineWidth] = useState(2);
 
   const getActiveColor = (isActive: boolean) =>
     isActive ? { backgroundColor: "gray" } : {};
@@ -125,13 +126,16 @@ const ImageDrawer = ({
             </IconButton>
             <ColorSelectModal
               isOpen={openColorSelector}
-              onCancel={() => {
+              onCancel={(width) => {
                 setOpenColorSelector(false);
+                setLineWidth(width);
               }}
-              onSelect={(color) => {
+              onSelect={(color, width) => {
                 setCurrentPenColor(color);
                 setOpenColorSelector(false);
+                setLineWidth(width);
               }}
+              currentLineWidth={lineWidth}
             />
 
             <div

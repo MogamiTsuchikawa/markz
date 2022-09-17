@@ -1,10 +1,19 @@
-import { Box, Button, Modal, Typography, IconButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Modal,
+  Typography,
+  IconButton,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { useRef, useEffect, MouseEventHandler, useState } from "react";
 import { BorderColor } from "@mui/icons-material";
 type Props = {
-  onSelect: (color: string) => void;
-  onCancel: () => void;
+  onSelect: (color: string, width: number) => void;
+  onCancel: (width: number) => void;
   isOpen: boolean;
+  currentLineWidth: number;
 };
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -17,15 +26,24 @@ const modalStyle = {
   boxShadow: 24,
   p: 4,
 };
-const ColorSelectModal = ({ onSelect, onCancel, isOpen }: Props) => {
+const ColorSelectModal = ({
+  onSelect,
+  onCancel,
+  isOpen,
+  currentLineWidth,
+}: Props) => {
   const [open, setOpen] = useState(isOpen);
   useEffect(() => {
     setOpen(isOpen);
   }, [isOpen]);
   const onClickColorBtn = (color: string) => {
-    onSelect(color);
+    onSelect(color, lineWidth);
     setOpen(false);
   };
+  const [lineWidth, setLineWidth] = useState(2);
+  useEffect(() => {
+    setLineWidth(currentLineWidth);
+  }, [currentLineWidth]);
   const colors = ["black", "red", "blue", "green", "orange"];
   return (
     <>
@@ -33,7 +51,7 @@ const ColorSelectModal = ({ onSelect, onCancel, isOpen }: Props) => {
         open={open}
         onClose={() => {
           setOpen(false);
-          onCancel();
+          onCancel(lineWidth);
         }}
       >
         <Box sx={modalStyle}>
@@ -47,6 +65,19 @@ const ColorSelectModal = ({ onSelect, onCancel, isOpen }: Props) => {
               <BorderColor sx={{ color: c }} />
             </IconButton>
           ))}
+          <Select
+            label="線の太さ"
+            onChange={(e) => {
+              if (typeof e.target.value === "string") return;
+              setLineWidth(e.target.value);
+            }}
+            value={lineWidth}
+          >
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={6}>6</MenuItem>
+            <MenuItem value={8}>8</MenuItem>
+          </Select>
         </Box>
       </Modal>
     </>
