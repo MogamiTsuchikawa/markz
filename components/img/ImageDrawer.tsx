@@ -92,7 +92,7 @@ const ImageDrawer = ({
     const touch: any = getTouch(e);
     if (touch === null) return;
     isDrawing = true;
-    lastPos = getPos(e);
+    lastPos = getPos(touch);
     const ctx = getContext();
     if (ctx === null) return;
     ctx.globalCompositeOperation =
@@ -119,7 +119,7 @@ const ImageDrawer = ({
     const ctx = getContext();
     if (ctx === null) return;
     ctx.moveTo(lastPos[0], lastPos[1]);
-    const pos = getPos(e);
+    const pos = getPos(touch);
     ctx.lineTo(pos[0], pos[1]);
     ctx.strokeStyle = (" " + currentPenColor).slice(1);
     ctx.stroke();
