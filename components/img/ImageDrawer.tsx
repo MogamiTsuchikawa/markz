@@ -25,7 +25,6 @@ type ImageDrawerProps = {
   onDrawEnd: (drawImage: DrawImage) => void;
   onClose: () => void;
 };
-const palmRejectionEnabled = "touchType" in Touch.prototype;
 const modalStyle = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -70,7 +69,7 @@ const ImageDrawer = ({
   const getTouch = (e: any) => {
     for (const touch of Array.from(e.changedTouches)) {
       const t: any = touch;
-      if (!palmRejectionEnabled || t.touchType === "stylus") {
+      if (t.touchType === "stylus") {
         return touch;
       }
     }
