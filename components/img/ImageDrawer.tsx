@@ -82,7 +82,7 @@ const ImageDrawer = ({
     e.preventDefault();
     for (let i = 0; i < e.touches.length; i++) {
       const t: any = e.touches[i];
-      if (t.touchType !== "stylus") return;
+      if (t.touchType !== "stylus") continue;
       if (!canvasRef.current) return;
       isDrawing = true;
       lastPos = getPos(e);
@@ -109,7 +109,7 @@ const ImageDrawer = ({
     e.preventDefault();
     for (let i = 0; i < e.touches.length; i++) {
       const t: any = e.touches[i];
-      if (t.touchType !== "stylus") return;
+      if (t.touchType !== "stylus") continue;
       if (!isDrawing) return;
       const ctx = getContext();
       if (ctx === null) return;
@@ -128,7 +128,7 @@ const ImageDrawer = ({
     e.preventDefault();
     for (let i = 0; i < e.touches.length; i++) {
       const t: any = e.touches[i];
-      if (t.touchType !== "stylus") return;
+      if (t.touchType !== "stylus") continue;
       isDrawing = false;
     }
   };
