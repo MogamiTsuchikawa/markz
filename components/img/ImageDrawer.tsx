@@ -79,6 +79,7 @@ const ImageDrawer = ({
     ctx.beginPath();
   };
   const onTouchStart: TouchEventHandler<HTMLCanvasElement> = (e) => {
+    e.preventDefault();
     for (let i = 0; i < e.touches.length; i++) {
       const t: any = e.touches[i];
       if (t.touchType !== "stylus") return;
@@ -105,6 +106,7 @@ const ImageDrawer = ({
     lastPos = pos;
   };
   const onTouchMove: TouchEventHandler<HTMLCanvasElement> = (e) => {
+    e.preventDefault();
     for (let i = 0; i < e.touches.length; i++) {
       const t: any = e.touches[i];
       if (t.touchType !== "stylus") return;
@@ -123,6 +125,7 @@ const ImageDrawer = ({
     isDrawing = false;
   };
   const onTouchEnd: TouchEventHandler<HTMLCanvasElement> = (e) => {
+    e.preventDefault();
     for (let i = 0; i < e.touches.length; i++) {
       const t: any = e.touches[i];
       if (t.touchType !== "stylus") return;
